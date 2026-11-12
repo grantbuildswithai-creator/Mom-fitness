@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Susan's Stars">
+<title>Susan's Stars</title>
+<link rel="icon" href="assets/icon-180.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<style>
+  :root{
+    --deep-sea:#0A3E60; --deep-teal:#0B5563; --teal:#0E7C86; --bright:#1B9AAA;
+    --pale:#EFF8FA; --sun:#FFD93D; --gold:#F5A623; --ink:#12303F; --white:#fff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+    background:var(--pale); color:var(--ink);
+    touch-action:manipulation; padding-bottom:110px;
+  }
+  /* ---------- header ---------- */
+  .hero{position:relative; line-height:0;}
+  .hero img{width:100%; height:auto; display:block;}
+  .hero .title{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; line-height:1.15;
+    padding:0 16px;
+  }
+  .hero h1{
+    margin:0; font-size:clamp(34px,9vw,52px); font-weight:800; color:var(--white);
+    text-shadow:0 2px 10px rgba(4,40,60,.55), 0 0 2px rgba(4,40,60,.6);
+    letter-spacing:.5px;
+  }
+  .hero .tag{
+    margin-top:6px; font-size:clamp(16px,4.4vw,22px); font-weight:600; color:var(--sun);
+    text-shadow:0 1px 6px rgba(4,40,60,.65);
+  }
+  /* ---------- layout ---------- */
+  main{max-width:560px; margin:0 auto; padding:18px 16px 0;}
+  .greeting{font-size:30px; font-weight:800; color:var(--deep-sea); margin:4px 0 2px;}
+  .dateline{font-size:17px; color:var(--deep-teal); font-weight:600; margin:0 0 10px;}
+  .quote{
+    font-size:20px; font-style:italic; line-height:1.45; color:var(--ink);
+    background:var(--white); border-left:6px solid var(--sun);
+    border-radius:12px; padding:14px 16px; margin:0 0 18px;
+    box-shadow:0 2px 8px rgba(10,62,96,.08);
+  }
+  .quote .by{display:block; margin-top:8px; font-size:16px; font-style:normal; color:var(--deep-teal); font-weight:600;}
+  /* ---------- stats ---------- */
+  .stats{display:flex; gap:10px; margin:0 0 18px;}
+  .stat{
+    flex:1; background:var(--white); border-radius:14px; text-align:center;
+    padding:12px 4px 10px; box-shadow:0 2px 8px rgba(10,62,96,.08);
+  }
+  .stat .num{font-size:34px; font-weight:800; color:var(--deep-sea); line-height:1;}
+  .stat .lab{font-size:14px; font-weight:700; color:var(--deep-teal); margin-top:5px; text-transform:uppercase; letter-spacing:.4px;}
+  /* ---------- checklist blocks ---------- */
+  .block{
+    width:100%; text-align:left; border:3px solid var(--teal); background:var(--white);
+    border-radius:18px; padding:16px; margin:0 0 14px; cursor:pointer;
+    display:block; font-family:inherit; color:var(--ink);
+    box-shadow:0 3px 10px rgba(10,62,96,.10);
+  }
+  .block .row{display:flex; align-items:center; gap:14px;}
+  .block .emoji{font-size:42px; line-height:1;}
+  .block .name{font-size:26px; font-weight:800; color:var(--deep-sea);}
+  .block .sub{font-size:17px; color:var(--deep-teal); font-weight:600; margin-top:2px;}
+  .block .box{
+    margin-left:auto; flex:0 0 auto; width:52px; height:52px; border-radius:14px;
+    border:3px solid var(--teal); display:flex; align-items:center; justify-content:center;
+    font-size:32px; color:var(--white); background:var(--white);
+  }
+  .block.done{background:linear-gradient(180deg,#FFF7D6,#FFEFA8); border-color:var(--gold);}
+  .block.done .box{background:var(--gold); border-color:var(--gold);}
+  .block .ref{
+    margin-top:12px; font-size:16.5px; line-height:1.5; color:var(--ink);
+    border-top:2px dashed rgba(14,124,134,.35); padding-top:10px; display:none;
+  }
+  .block.done .ref, .block.showref .ref{display:block;}
+  .block .ref b{color:var(--deep-sea);}
+  .cheer{
+    text-align:center; font-size:20px; font-weight:700; color:var(--deep-teal);
+    min-height:30px; margin:2px 0 14px;
+  }
+  /* ---------- perfect-day strip ---------- */
+  .strip{
+    background:var(--deep-sea); border-radius:18px; overflow:hidden; color:var(--white);
+    box-shadow:0 3px 10px rgba(10,62,96,.25); margin-bottom:8px;
+  }
+  .strip img{width:100%; display:block;}
+  .strip p{margin:0; padding:14px 18px 18px; font-size:19px; line-height:1.45; text-align:center; font-weight:600;}
+  .strip p b{color:var(--sun);}
+  /* ---------- unlock card ---------- */
+  .unlock{
+    background:var(--white); border:3px solid var(--gold); border-radius:18px;
+    padding:16px; margin:0 0 16px; box-shadow:0 3px 12px rgba(245,166,35,.25);
+  }
+  .unlock h3{margin:0 0 4px; font-size:22px; color:var(--deep-sea);}
+  .unlock p{margin:0 0 12px; font-size:17px; color:var(--deep-teal); font-weight:600;}
+  .unlock video{width:100%; border-radius:12px; display:block; background:#000;}
+  /* ---------- badges ---------- */
+  h2.screen{font-size:28px; color:var(--deep-sea); margin:6px 0 12px;}
+  .starsummary{
+    background:var(--deep-sea); color:var(--white); border-radius:18px; overflow:hidden; margin-bottom:16px;
+  }
+  .starsummary img{width:100%; display:block;}
+  .starsummary .inner{padding:14px 18px 18px; text-align:center;}
+  .starsummary .big{font-size:26px; font-weight:800;}
+  .starsummary .big span{color:var(--sun);}
+  .starsummary .small{font-size:17px; margin-top:4px; font-weight:600;}
+  .badgegrid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .badge{
+    background:var(--white); border-radius:16px; padding:16px 12px; text-align:center;
+    box-shadow:0 2px 8px rgba(10,62,96,.08); border:3px solid transparent;
+  }
+  .badge .ic{font-size:44px; line-height:1.1;}
+  .badge .nm{font-size:19px; font-weight:800; color:var(--deep-sea); margin-top:6px;}
+  .badge .how{font-size:15px; color:var(--deep-teal); margin-top:4px; line-height:1.4; font-weight:600;}
+  .badge.locked{opacity:.55; filter:grayscale(.7);}
+  .badge.earned{border-color:var(--gold); background:linear-gradient(180deg,#FFFDF4,#FFF6D8);}
+  .fam h3{font-size:23px; color:var(--deep-sea); margin:22px 0 10px;}
+  .fam .gift{
+    background:var(--white); border-radius:16px; padding:16px; font-size:18px; font-weight:600;
+    color:var(--deep-teal); box-shadow:0 2px 8px rgba(10,62,96,.08); text-align:center;
+  }
+  .fam video{width:100%; border-radius:12px; display:block; background:#000; margin-bottom:8px;}
+  .fam .from{font-size:17px; font-weight:700; color:var(--deep-sea); margin:0 0 14px; text-align:center;}
+  /* ---------- nav ---------- */
+  nav{
+    position:fixed; left:0; right:0; bottom:0; z-index:30;
+    background:var(--white); border-top:2px solid rgba(14,124,134,.25);
+    display:flex; padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+    gap:12px; max-width:100%;
+  }
+  nav button{
+    flex:1; font-family:inherit; font-size:21px; font-weight:800; padding:15px 0;
+    border-radius:14px; border:3px solid var(--teal); background:var(--white); color:var(--deep-teal);
+    cursor:pointer;
+  }
+  nav button.on{background:var(--teal); color:var(--white);}
+  /* ---------- celebration overlay ---------- */
+  #celebrate{
+    position:fixed; inset:0; z-index:60; display:none;
+    background:rgba(10,62,96,.92); color:var(--white);
+    align-items:center; justify-content:center; text-align:center; padding:24px;
+  }
+  #celebrate.show{display:flex;}
+  #celebrate .card{max-width:440px; width:100%;}
+  #celebrate img{width:min(300px,80vw); border-radius:16px; box-shadow:0 6px 30px rgba(0,0,0,.4);}
+  #celebrate h2{font-size:34px; margin:18px 0 6px; color:var(--sun);}
+  #celebrate p{font-size:20px; line-height:1.5; margin:0 0 18px; font-weight:600;}
+  #celebrate button{
+    font-family:inherit; font-size:21px; font-weight:800; padding:14px 34px; border:none;
+    border-radius:14px; background:var(--sun); color:var(--deep-sea); cursor:pointer;
+  }
+  .confetti{position:fixed; top:-4vh; z-index:70; pointer-events:none; border-radius:3px;}
+  /* ---------- test panel & reset ---------- */
+  #testpanel{
+    display:none; background:#FFF3CD; border:2px dashed var(--gold); border-radius:12px;
+    padding:12px; margin:18px 0; font-size:16px;
+  }
+  #testpanel.show{display:block;}
+  #testpanel button{
+    font-family:inherit; font-size:16px; font-weight:700; padding:9px 12px; margin:4px 4px 0 0;
+    border-radius:9px; border:2px solid var(--deep-teal); background:var(--white); color:var(--deep-teal);
+  }
+  .resetrow{text-align:center; margin:26px 0 6px;}
+  .resetrow button{
+    font-family:inherit; background:none; border:none; color:#7A97A5; font-size:15px;
+    text-decoration:underline; cursor:pointer; padding:10px;
+  }
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img src="assets/header.jpg" alt="Yellow hibiscus and white plumeria around a sunrise over the ocean">
+  <div class="title">
+    <h1>Susan's Stars ★</h1>
+    <div class="tag">Consistency beats intensity</div>
+  </div>
+</header>
+
+<main>
+  <!-- ================= TODAY ================= -->
+  <section id="view-today">
+    <p class="greeting">Aloha, Susan!</p>
+    <p class="dateline" id="dateline"></p>
+    <div class="quote"><span id="quotetext"></span><span class="by" id="quoteby"></span></div>
+
+    <div class="stats">
+      <div class="stat"><div class="num" id="stat-streak">0</div><div class="lab">Day streak</div></div>
+      <div class="stat"><div class="num" id="stat-stars">0</div><div class="lab">Stars ★</div></div>
+      <div class="stat"><div class="num" id="stat-count">–</div><div class="lab">Days to Jan 4</div></div>
+    </div>
+
+    <div id="unlock-slot"></div>
+
+    <button class="block" id="blk-pedal" aria-pressed="false">
+      <span class="row">
+        <span class="emoji">🚲</span>
+        <span><span class="name">Pedal</span><div class="sub">20 minutes on the bike</div></span>
+        <span class="box">✓</span>
+      </span>
+    </button>
+
+    <button class="block" id="blk-exercises" aria-pressed="false">
+      <span class="row">
+        <span class="emoji">💪</span>
+        <span><span class="name">Exercises</span><div class="sub">Your PT exercises</div></span>
+        <span class="box">✓</span>
+      </span>
+      <span class="ref">
+        <b>Standing:</b> step ups ×10 · squats ×10 · square balance 30 sec with head moves · side leg lifts · marches · kick backs<br>
+        <b>In bed:</b> ankle pumps ×20 · knee bends &amp; lifts ×10 · heel slides ×10 · leg side ×10 · leg lift ×10 · bridges ×10<br>
+        <b>Upper body &amp; core:</b> counter push ups ×10 · calf heel raises ×20 · calf stretch ×10 · seated core crunches ×10
+      </span>
+    </button>
+
+    <button class="block" id="blk-walk" aria-pressed="false">
+      <span class="row">
+        <span class="emoji">🚶‍♀️</span>
+        <span><span class="name">Walk</span><div class="sub">Your daily walk</div></span>
+        <span class="box">✓</span>
+      </span>
+    </button>
+
+    <p class="cheer" id="cheer"></p>
+
+    <div class="strip">
+      <img src="assets/star-wreath.jpg" alt="A gold star in a wreath of hibiscus and plumeria">
+      <p>A <b>perfect day</b> earns your star — finish all 3 to see your celebration. ★</p>
+    </div>
+  </section>
+
+  <!-- ================= BADGES ================= -->
+  <section id="view-badges" class="hidden">
+    <h2 class="screen">My Badges</h2>
+    <div class="starsummary">
+      <img src="assets/star-wreath.jpg" alt="A gold star in a wreath of hibiscus and plumeria">
+      <div class="inner">
+        <div class="big"><span id="badge-stars">0</span> perfect-day stars ★</div>
+        <div class="small" id="badge-best">Best streak so far: 0 days</div>
+      </div>
+    </div>
+    <div class="badgegrid" id="badgegrid"></div>
+    <div class="fam">
+      <h3>Messages from your family 💙</h3>
+      <div id="fam-slot"></div>
+    </div>
+    <div class="resetrow"><button id="btn-reset" type="button">Start over (erase everything)</button></div>
+  </section>
+
+  <div id="testpanel"></div>
+</main>
+
+<nav>
+  <button id="nav-today" class="on" type="button">☀️ Today</button>
+  <button id="nav-badges" type="button">🏅 My Badges</button>
+</nav>
+
+<div id="celebrate">
+  <div class="card">
+    <img src="assets/star-wreath.jpg" alt="A gold star in a wreath of hibiscus and plumeria">
+    <h2>A perfect day, Susan! ★</h2>
+    <p>You did all three — pedal, exercises, and walk.<br>Another star for your collection!</p>
+    <button id="btn-celebrate-close" type="button">Wonderful!</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ================= data ================= */
+var QUOTES = [
+["Little by little, a little becomes a lot.","Tanzanian proverb"],
+["Success is the sum of small efforts, repeated day in and day out.","Robert Collier"],
+["The journey of a thousand miles begins with a single step.","Lao Tzu"],
+["We are what we repeatedly do. Excellence, then, is not an act, but a habit.","Will Durant"],
+["Slow progress is still progress.","Unknown"],
+["A year from now you may wish you had started today.","Karen Lamb"],
+["It always seems impossible until it's done.","Nelson Mandela"],
+["Start where you are. Use what you have. Do what you can.","Arthur Ashe"],
+["Small deeds done are better than great deeds planned.","Peter Marshall"],
+["The secret of getting ahead is getting started.","Mark Twain"],
+["Well done is better than well said.","Benjamin Franklin"],
+["One step at a time is good walking.","Chinese proverb"],
+["He who moves a mountain begins by carrying away small stones.","Confucius"],
+["Great things are done by a series of small things brought together.","Vincent van Gogh"],
+["Perseverance is not a long race; it is many short races one after the other.","Walter Elliot"],
+["Drop by drop, the water pot is filled.","Buddha"],
+["Little strokes fell great oaks.","Benjamin Franklin"],
+["Rome wasn't built in a day.","Proverb"],
+["Nature does not hurry, yet everything is accomplished.","Lao Tzu"],
+["A little progress each day adds up to big results.","Unknown"],
+["The days are long, but the years are short.","Gretchen Rubin"],
+["How we spend our days is, of course, how we spend our lives.","Annie Dillard"],
+["Don't judge each day by the harvest you reap, but by the seeds that you plant.","Robert Louis Stevenson"],
+["Patience and perseverance have a magical effect before which difficulties disappear.","John Quincy Adams"],
+["It does not matter how slowly you go, as long as you do not stop.","Confucius"],
+["Energy and persistence conquer all things.","Benjamin Franklin"],
+["Nothing in this world can take the place of persistence.","Calvin Coolidge"],
+["Fall seven times and stand up eight.","Japanese proverb"],
+["Our greatest glory is not in never falling, but in rising every time we fall.","Confucius (attributed)"],
+["Courage doesn't always roar. Sometimes courage is the quiet voice at the end of the day saying, “I will try again tomorrow.”","Mary Anne Radmacher"],
+["Every day may not be good, but there's something good in every day.","Alice Morse Earle"],
+["Happiness is not something ready made. It comes from your own actions.","Dalai Lama"],
+["The best time to plant a tree was twenty years ago. The second best time is now.","Chinese proverb"],
+["Act as if what you do makes a difference. It does.","William James"],
+["Believe you can, and you're halfway there.","Theodore Roosevelt"],
+["You are never too old to set another goal or to dream a new dream.","C.S. Lewis (attributed)"],
+["Age is an issue of mind over matter. If you don't mind, it doesn't matter.","Mark Twain (attributed)"],
+["The longer I live, the more beautiful life becomes.","Frank Lloyd Wright"],
+["With the new day comes new strength and new thoughts.","Eleanor Roosevelt"],
+["Every morning we are born again. What we do today is what matters most.","Buddha (attributed)"],
+["This is a wonderful day. I've never seen this one before.","Maya Angelou"],
+["Write it on your heart that every day is the best day in the year.","Ralph Waldo Emerson"],
+["Light tomorrow with today.","Elizabeth Barrett Browning"],
+["Today is the only day. Yesterday is gone.","John Wooden"],
+["The future depends on what you do today.","Mahatma Gandhi"],
+["Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.","Buddha"],
+["One today is worth two tomorrows.","Benjamin Franklin"],
+["Well begun is half done.","Aristotle"],
+["He that can have patience can have what he will.","Benjamin Franklin"],
+["Patience is bitter, but its fruit is sweet.","Jean-Jacques Rousseau"],
+["Rivers know this: there is no hurry. We shall get there some day.","A.A. Milne"],
+["Slow and steady wins the race.","Aesop"],
+["Keep your face always toward the sunshine, and shadows will fall behind you.","Walt Whitman"],
+["Wherever you go, no matter what the weather, always bring your own sunshine.","Anthony J. D'Angelo"],
+["It is never too late to be what you might have been.","George Eliot (attributed)"],
+["You don't have to be extreme, just consistent.","Unknown"]
+];
+var UNLOCKABLES = [
+  {id:"grant-video-01", type:"video", from:"Grant", src:"unlockables/grant-video-01.mp4", rule:"firstDay"}
+];
+var BLOCKS = ["pedal","exercises","walk"];
+var STORE_KEY = "susans-stars-v1";
+var START = new Date(2026,10,10);       /* Nov 10, 2026 */
+var END   = new Date(2027,0,4);         /* Jan 4, 2027 */
+var TOTAL_DAYS = 56;
+
+/* ================= test mode ================= */
+var params = new URLSearchParams(location.search);
+var TEST = params.get("test") === "1";
+function getOffset(){
+  if(!TEST) return 0;
+  var n = parseInt(sessionStorage.getItem("ss-test-offset")||"0",10);
+  return isNaN(n)?0:n;
+}
+function setOffset(n){ sessionStorage.setItem("ss-test-offset", String(n)); }
+
+/* ================= dates ================= */
+function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function today(){
+  var t = startOfDay(new Date());
+  t.setDate(t.getDate() + getOffset());
+  return t;
+}
+function keyOf(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function dateOfIndex(i){ var d = startOfDay(START); d.setDate(d.getDate()+i); return d; }
+function dayIndex(){ return Math.round((startOfDay(today()) - startOfDay(START)) / 86400000); }
+function fmtDate(d){ return d.toLocaleDateString("en-US",{weekday:"long", month:"long", day:"numeric"}); }
+
+/* ================= state ================= */
+function load(){
+  try{ var s = JSON.parse(localStorage.getItem(STORE_KEY)); if(s && s.days) return s; }catch(e){}
+  return {days:{}, celebrated:{}, unlockDay:{}};
+}
+function save(s){ localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
+var state = load();
+
+function countIdx(i){
+  if(i<0 || i>=TOTAL_DAYS) return 0;
+  var rec = state.days[keyOf(dateOfIndex(i))];
+  if(!rec) return 0;
+  var n=0; for(var b=0;b<3;b++){ if(rec[BLOCKS[b]]) n++; }
+  return n;
+}
+function isStreakIdx(i){ return countIdx(i) >= 2; }
+function isPerfectIdx(i){ return countIdx(i) === 3; }
+function runEnding(i){
+  var n=0; while(i>=0 && isStreakIdx(i)){ n++; i--; } return n;
+}
+function currentStreak(){
+  var t = dayIndex();
+  if(t<0) return 0;
+  if(isStreakIdx(t)) return runEnding(t);
+  if(t-1>=0 && isStreakIdx(t-1)) return runEnding(t-1);
+  return 0;
+}
+function bestStreak(){
+  var best=0, run=0;
+  for(var i=0;i<TOTAL_DAYS;i++){ run = isStreakIdx(i) ? run+1 : 0; if(run>best) best=run; }
+  return best;
+}
+function starTotal(){ var n=0; for(var i=0;i<TOTAL_DAYS;i++){ if(isPerfectIdx(i)) n++; } return n; }
+function weekStreakDays(w){ var n=0; for(var k=0;k<7;k++){ if(isStreakIdx(w*7+k)) n++; } return n; }
+function weeklyStar(w){ return weekStreakDays(w) >= 3; }
+function championEarned(){
+  var run=0;
+  for(var w=0; w<8; w++){ run = weeklyStar(w) ? run+1 : 0; if(run>=4) return true; }
+  return false;
+}
+function firstDayDone(){
+  for(var i=0;i<TOTAL_DAYS;i++){ if(isStreakIdx(i)) return true; }
+  return false;
+}
+function badgeStates(){
+  var t = dayIndex();
+  return {
+    "first":  firstDayDone(),
+    "s2":     bestStreak() >= 2,
+    "s3":     bestStreak() >= 3,
+    "s7":     bestStreak() >= 7,
+    "weekly": (function(){ for(var w=0;w<8;w++){ if(weeklyStar(w)) return true; } return false; })(),
+    "champ":  championEarned(),
+    "done":   t >= TOTAL_DAYS-1
+  };
+}
+var BADGES = [
+  {id:"first",  ic:"🌺", nm:"First Day",       how:"Finish a day with 2 or 3 blocks"},
+  {id:"s2",     ic:"🔥", nm:"2-Day Streak",    how:"2 streak days in a row"},
+  {id:"s3",     ic:"🔥", nm:"3-Day Streak",    how:"3 streak days in a row"},
+  {id:"s7",     ic:"🔥", nm:"7-Day Streak",    how:"7 streak days in a row"},
+  {id:"weekly", ic:"🌟", nm:"Weekly Star",     how:"3 or more streak days in one week"},
+  {id:"champ",  ic:"🏆", nm:"4-Week Champion", how:"Earn the Weekly Star 4 weeks in a row"},
+  {id:"done",   ic:"🌈", nm:"Program Complete",how:"Reach January 4 — the finish line!"}
+];
+function unlockEarned(u){
+  if(u.rule === "firstDay") return firstDayDone();
+  return false;
+}
+</script>
+
+<script>
+"use strict";
+/* extra runtime styles: confetti fall + always-visible exercise reference */
+(function(){
+  var st = document.createElement("style");
+  st.textContent =
+    "@keyframes ssfall{to{transform:translateY(110vh) rotate(720deg);}}" +
+    ".block .ref{display:block;}";
+  document.head.appendChild(st);
+})();
+
+function $(id){ return document.getElementById(id); }
+function todayRec(){
+  var k = keyOf(today());
+  if(!state.days[k]) state.days[k] = {pedal:false, exercises:false, walk:false};
+  return state.days[k];
+}
+function todayCount(){
+  var rec = state.days[keyOf(today())]; if(!rec) return 0;
+  var n=0; for(var b=0;b<3;b++){ if(rec[BLOCKS[b]]) n++; } return n;
+}
+
+function renderToday(){
+  var idx = dayIndex();
+  var t = today();
+  /* dateline */
+  var dl;
+  if(idx < 0) dl = "Your program starts " + fmtDate(START) + " 💙";
+  else if(idx >= TOTAL_DAYS) dl = "Program complete — you did it, Susan! 🎉";
+  else dl = "Day " + (idx+1) + " of 56 · " + fmtDate(t);
+  $("dateline").textContent = dl;
+  /* quote */
+  var qi = Math.max(0, Math.min(TOTAL_DAYS-1, idx));
+  $("quotetext").textContent = "“" + QUOTES[qi][0] + "”";
+  $("quoteby").textContent = "— " + QUOTES[qi][1];
+  /* stats */
+  $("stat-streak").textContent = currentStreak();
+  $("stat-stars").textContent = starTotal();
+  var left = Math.max(0, Math.round((startOfDay(END) - startOfDay(t)) / 86400000));
+  $("stat-count").textContent = (idx >= TOTAL_DAYS) ? "🎉" : left;
+  /* blocks */
+  var rec = state.days[keyOf(t)] || {};
+  for(var b=0;b<3;b++){
+    var el = $("blk-"+BLOCKS[b]);
+    var done = !!rec[BLOCKS[b]];
+    el.classList.toggle("done", done);
+    el.setAttribute("aria-pressed", done ? "true" : "false");
+  }
+  /* cheer line */
+  var n = todayCount();
+  $("cheer").textContent =
+    n===3 ? "A perfect day, Susan! ★" :
+    n===2 ? "You showed up — that's what counts. A streak day! 🎉" :
+    n===1 ? "Lovely start, Susan! 💙" :
+            "Tap a block when you've done it — every little bit counts. 💙";
+  renderUnlockCard();
+}
+
+function renderUnlockCard(){
+  var slot = $("unlock-slot");
+  slot.innerHTML = "";
+  for(var i=0;i<UNLOCKABLES.length;i++){
+    var u = UNLOCKABLES[i];
+    if(unlockEarned(u) && state.unlockDay[u.id] === keyOf(today())){
+      var div = document.createElement("div");
+      div.className = "unlock";
+      div.innerHTML = "<h3>🎁 A message just for you!</h3><p>From " + u.from +
+        " — unlocked by your hard work today.</p>" +
+        (u.type==="video" ? "<video controls playsinline preload='metadata' src='" + u.src + "'></video>" : "");
+      slot.appendChild(div);
+    }
+  }
+}
+
+function renderBadges(){
+  $("badge-stars").textContent = starTotal();
+  $("badge-best").textContent = "Best streak so far: " + bestStreak() + (bestStreak()===1 ? " day" : " days") + " · Current streak: " + currentStreak();
+  var st = badgeStates();
+  var grid = $("badgegrid");
+  grid.innerHTML = "";
+  for(var i=0;i<BADGES.length;i++){
+    var b = BADGES[i], earned = !!st[b.id];
+    var d = document.createElement("div");
+    d.className = "badge " + (earned ? "earned" : "locked");
+    d.innerHTML = "<div class='ic'>" + b.ic + "</div><div class='nm'>" + b.nm + "</div>" +
+      "<div class='how'>" + (earned ? "★ Earned!" : b.how) + "</div>";
+    grid.appendChild(d);
+  }
+  /* perfect-day star badge note */
+  var fam = $("fam-slot");
+  fam.innerHTML = "";
+  var anyUnlocked = false;
+  for(var j=0;j<UNLOCKABLES.length;j++){
+    var u2 = UNLOCKABLES[j];
+    if(unlockEarned(u2)){
+      anyUnlocked = true;
+      var wrap = document.createElement("div");
+      wrap.innerHTML = (u2.type==="video" ? "<video controls playsinline preload='metadata' src='" + u2.src + "'></video>" : "") +
+        "<p class='from'>From " + u2.from + " 💙</p>";
+      fam.appendChild(wrap);
+    }
+  }
+  if(!anyUnlocked){
+    fam.innerHTML = "<div class='gift'>🎁 A surprise from your family is waiting — it opens on your first finished day.</div>";
+  }
+}
+
+function render(){ renderToday(); renderBadges(); }
+
+/* ================= interactions ================= */
+function confetti(){
+  var colors = ["#FFD93D","#F5A623","#1B9AAA","#0E7C86","#ffffff"];
+  for(var i=0;i<44;i++){
+    var c = document.createElement("div");
+    c.className = "confetti";
+    var sz = 7 + Math.random()*8;
+    c.style.left = (Math.random()*100) + "vw";
+    c.style.width = sz + "px"; c.style.height = (sz*0.55) + "px";
+    c.style.background = colors[i % colors.length];
+    c.style.animation = "ssfall " + (2.2 + Math.random()*1.6) + "s ease-in " + (Math.random()*0.7) + "s forwards";
+    document.body.appendChild(c);
+    (function(el){ setTimeout(function(){ el.remove(); }, 4800); })(c);
+  }
+}
+function celebrate(){ confetti(); $("celebrate").classList.add("show"); }
+$("btn-celebrate-close").addEventListener("click", function(){ $("celebrate").classList.remove("show"); });
+
+function toggleBlock(name){
+  var rec = todayRec();
+  var before = todayCount();
+  rec[name] = !rec[name];
+  var after = todayCount();
+  /* record unlock day the first time a day is completed (2+ blocks) */
+  for(var i=0;i<UNLOCKABLES.length;i++){
+    var u = UNLOCKABLES[i];
+    if(after >= 2 && unlockEarned(u) && !state.unlockDay[u.id]){
+      state.unlockDay[u.id] = keyOf(today());
+    }
+  }
+  save(state);
+  render();
+  if(after === 3 && before < 3){
+    var k = keyOf(today());
+    if(!state.celebrated[k]){ state.celebrated[k] = true; save(state); celebrate(); }
+  }
+}
+for(var bi=0; bi<3; bi++){
+  (function(name){
+    $("blk-"+name).addEventListener("click", function(){ toggleBlock(name); });
+  })(BLOCKS[bi]);
+}
+
+/* nav */
+function showView(v){
+  $("view-today").classList.toggle("hidden", v!=="today");
+  $("view-badges").classList.toggle("hidden", v!=="badges");
+  $("nav-today").classList.toggle("on", v==="today");
+  $("nav-badges").classList.toggle("on", v==="badges");
+  window.scrollTo(0,0);
+}
+$("nav-today").addEventListener("click", function(){ showView("today"); });
+$("nav-badges").addEventListener("click", function(){ showView("badges"); });
+
+/* reset (for Grant's testing; Susan's own phone starts empty regardless) */
+$("btn-reset").addEventListener("click", function(){
+  if(confirm("Erase all check-offs, stars and badges and start fresh?")){
+    localStorage.removeItem(STORE_KEY);
+    state = load(); render();
+    alert("All cleared — fresh start!");
+  }
+});
+
+/* ================= test panel ================= */
+if(TEST){
+  var panel = $("testpanel");
+  panel.classList.add("show");
+  panel.innerHTML =
+    "<b>TEST MODE</b> — pretending today is <b>" + fmtDate(today()) + "</b> (Day " + (dayIndex()+1) + " of 56).<br>" +
+    "<button type='button' id='tp-prev'>◀ Day before</button>" +
+    "<button type='button' id='tp-next'>Day after ▶</button>" +
+    "<button type='button' id='tp-real'>Real today</button>" +
+    "<button type='button' id='tp-seed'>Seed a good week</button>" +
+    "<button type='button' id='tp-wipe'>Erase all data</button>" +
+    "<div style='margin-top:6px'>Open this page with <b>?test=1</b> in the address for these controls. Susan's link won't have it.</div>";
+  $("tp-prev").addEventListener("click", function(){ setOffset(getOffset()-1); location.reload(); });
+  $("tp-next").addEventListener("click", function(){ setOffset(getOffset()+1); location.reload(); });
+  $("tp-real").addEventListener("click", function(){ setOffset(0); location.reload(); });
+  $("tp-wipe").addEventListener("click", function(){
+    if(confirm("Erase ALL saved data?")){ localStorage.removeItem(STORE_KEY); location.reload(); }
+  });
+  $("tp-seed").addEventListener("click", function(){
+    var t = dayIndex();
+    for(var i=Math.max(0,t-6); i<t; i++){
+      var rec = {}; var perfect = (i % 2 === 0);
+      rec.pedal = true; rec.walk = true; rec.exercises = perfect;
+      state.days[keyOf(dateOfIndex(i))] = rec;
+    }
+    save(state); location.reload();
+  });
+}
+
+/* ?reset=1 in the address wipes everything (handy for Grant) */
+if(params.get("reset") === "1"){
+  localStorage.removeItem(STORE_KEY);
+  state = load();
+  history.replaceState(null, "", location.pathname + (TEST ? "?test=1" : ""));
+}
+
+/* init */
+render();
+if(params.get("view") === "badges") showView("badges");
+</script>
+</body>
+</html>

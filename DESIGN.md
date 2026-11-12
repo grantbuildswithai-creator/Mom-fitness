@@ -5,7 +5,7 @@ program. She opens it from her iPhone home screen each day, taps off three
 blocks, and earns streaks, stars, and badges — with a little piece of Hawaii on
 every screen.
 
-- **Status:** Design phase. Not yet built.
+- **Status:** Built 2026-11-12 (v1, single `index.html`) — in testing. Includes a hidden test mode (`?test=1`: pretend-date controls, demo seeding, wipe) and a confirm-guarded "Start over" reset on the My Badges screen; all data is on-device, so Susan's phone starts fresh on its own.
 - **Site (once built):** https://grantbuildswithai-creator.github.io/mom-fitness/
 - **Program dates:** Nov 10, 2026 → Jan 4, 2027 (56 days)
 - **Theme line (appears on the site):** "Consistency beats intensity"
