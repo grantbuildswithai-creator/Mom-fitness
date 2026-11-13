@@ -338,7 +338,7 @@ var UNLOCKABLES = [
   {id:"marc-video-01", type:"video", from:"Marc", src:"unlockables/marc-video-01.mp4", rule:"streak2"},
   {id:"marc-video-02", type:"video", from:"Marc", src:"unlockables/marc-video-02.mp4", rule:"streak3"},
   {id:"marc-video-03", type:"video", from:"Marc", src:"unlockables/marc-video-03.mp4", rule:"weekly"},
-  {id:"hannah-video-01", type:"video", from:"Hannah", src:"unlockables/hannah-video-01.mp4", rule:"streak7"},
+  {id:"hannah-video-01", type:"video", from:"Hannah", src:"unlockables/hannah-video-01.mp4", rule:"streak4"},
   {id:"reid-video-01", type:"video", from:"Reid", src:"unlockables/reid-video-01.mp4", rule:"stars5"},
   {id:"marcs-wife-video-01", type:"video", from:"Marc's wife", src:"unlockables/marcs-wife-video-01.mp4", rule:"weekly2"},
   {id:"grant-video-02", type:"video", from:"Grant", src:"unlockables/grant-video-02.mp4", rule:"champ"},
@@ -445,6 +445,7 @@ function unlockEarned(u){
   if(u.rule === "firstDay") return firstDayDone();
   if(u.rule === "streak2") return bestStreak() >= 2;
   if(u.rule === "streak3") return bestStreak() >= 3;
+  if(u.rule === "streak4") return bestStreak() >= 4;
   if(u.rule === "streak7") return bestStreak() >= 7;
   if(u.rule === "weekly") return weeklyStarCount() >= 1;
   if(u.rule === "weekly2") return weeklyStarCount() >= 2;
@@ -548,7 +549,12 @@ function renderBadges(){
       "<div class='how'>" + (earned ? "★ Earned!" : b.how) + "</div>";
     grid.appendChild(d);
   }
-  /* perfect-day star badge note */
+}
+
+/* Family gallery: built only when the Badges screen is opened, so the Today
+   screen never pays for video loading. Players preload metadata there so
+   each one shows a first frame and its length. */
+function renderGallery(){
   var fam = $("fam-slot");
   fam.innerHTML = "";
   var anyUnlocked = false;
@@ -557,7 +563,7 @@ function renderBadges(){
     if(unlockEarned(u2)){
       anyUnlocked = true;
       var wrap = document.createElement("div");
-      wrap.innerHTML = (u2.type==="video" ? "<video controls playsinline preload='none' src='" + u2.src + "'></video>" : "") +
+      wrap.innerHTML = (u2.type==="video" ? "<video controls playsinline preload='metadata' src='" + u2.src + "'></video>" : "") +
         "<p class='from'>From " + u2.from + " 💙</p>";
       fam.appendChild(wrap);
     }
@@ -616,6 +622,7 @@ for(var bi=0; bi<3; bi++){
 function showView(v){
   $("view-today").classList.toggle("hidden", v!=="today");
   $("view-badges").classList.toggle("hidden", v!=="badges");
+  if(v==="badges") renderGallery();
   $("nav-today").classList.toggle("on", v==="today");
   $("nav-badges").classList.toggle("on", v==="badges");
   window.scrollTo(0,0);
