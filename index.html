@@ -363,6 +363,9 @@ function getOffset(){
   return isNaN(n)?0:n;
 }
 function setOffset(n){ sessionStorage.setItem("ss-test-offset", String(n)); }
+function dayOneOffset(){
+  return Math.round((startOfDay(START) - startOfDay(new Date())) / 86400000);
+}
 
 /* ================= dates ================= */
 function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
@@ -628,6 +631,8 @@ $("nav-badges").addEventListener("click", function(){ showView("badges"); });
 $("btn-reset").addEventListener("click", function(){
   if(confirm("Erase all check-offs, stars and badges and start fresh?")){
     localStorage.removeItem(STORE_KEY);
+    /* test mode: a fresh start includes the pretend clock — back to Day 1 */
+    if(TEST){ setOffset(dayOneOffset()); location.reload(); return; }
     state = load(); render();
     alert("All cleared — fresh start!");
   }
@@ -642,14 +647,16 @@ if(TEST){
     "<button type='button' id='tp-prev'>◀ Day before</button>" +
     "<button type='button' id='tp-next'>Day after ▶</button>" +
     "<button type='button' id='tp-real'>Real today</button>" +
+    "<button type='button' id='tp-day1'>Back to Day 1</button>" +
     "<button type='button' id='tp-seed'>Seed a good week</button>" +
     "<button type='button' id='tp-wipe'>Erase all data</button>" +
     "<div style='margin-top:6px'>Open this page with <b>?test=1</b> in the address for these controls. Susan's link won't have it.</div>";
   $("tp-prev").addEventListener("click", function(){ setOffset(getOffset()-1); location.reload(); });
   $("tp-next").addEventListener("click", function(){ setOffset(getOffset()+1); location.reload(); });
   $("tp-real").addEventListener("click", function(){ setOffset(0); location.reload(); });
+  $("tp-day1").addEventListener("click", function(){ setOffset(dayOneOffset()); location.reload(); });
   $("tp-wipe").addEventListener("click", function(){
-    if(confirm("Erase ALL saved data?")){ localStorage.removeItem(STORE_KEY); location.reload(); }
+    if(confirm("Erase ALL saved data?")){ localStorage.removeItem(STORE_KEY); setOffset(dayOneOffset()); location.reload(); }
   });
   $("tp-seed").addEventListener("click", function(){
     var t = dayIndex();
@@ -667,6 +674,8 @@ if(params.get("reset") === "1"){
   localStorage.removeItem(STORE_KEY);
   state = load();
   history.replaceState(null, "", location.pathname + (TEST ? "?test=1" : ""));
+  /* test mode: land on Day 1 after the wipe, not wherever the clock was */
+  if(TEST){ setOffset(dayOneOffset()); location.reload(); }
 }
 
 /* init */
