@@ -333,17 +333,20 @@ var QUOTES = [
 ["It is never too late to be what you might have been.","George Eliot (attributed)"],
 ["You don't have to be extreme, just consistent.","Unknown"]
 ];
+/* Unlock rule (Grant, 2026-11-13): every day Susan completes 2 or 3 blocks
+   unlocks the NEXT video in this list — one per good day, whether or not
+   the days are consecutive. n = the number of good days needed. */
 var UNLOCKABLES = [
-  {id:"grant-video-01", type:"video", from:"Grant", src:"unlockables/grant-video-01.mp4", rule:"firstDay"},
-  {id:"marc-video-01", type:"video", from:"Marc", src:"unlockables/marc-video-01.mp4", rule:"streak2"},
-  {id:"marc-video-02", type:"video", from:"Marc", src:"unlockables/marc-video-02.mp4", rule:"streak3"},
-  {id:"marc-video-03", type:"video", from:"Marc", src:"unlockables/marc-video-03.mp4", rule:"weekly"},
-  {id:"hannah-video-01", type:"video", from:"Hannah", src:"unlockables/hannah-video-01.mp4", rule:"streak4"},
-  {id:"reid-video-01", type:"video", from:"Reid", src:"unlockables/reid-video-01.mp4", rule:"stars5"},
-  {id:"marcs-wife-video-01", type:"video", from:"Marc's wife", src:"unlockables/marcs-wife-video-01.mp4", rule:"weekly2"},
-  {id:"grant-video-02", type:"video", from:"Grant", src:"unlockables/grant-video-02.mp4", rule:"champ"},
-  {id:"reid-video-02", type:"video", from:"Reid", src:"unlockables/reid-video-02.mp4", rule:"stars10"},
-  {id:"grant-video-03", type:"video", from:"Grant", src:"unlockables/grant-video-03.mp4", rule:"done"}
+  {id:"grant-video-01", type:"video", from:"Grant", src:"unlockables/grant-video-01.mp4", n:1},
+  {id:"marc-video-01", type:"video", from:"Marc", src:"unlockables/marc-video-01.mp4", n:2},
+  {id:"marc-video-02", type:"video", from:"Marc", src:"unlockables/marc-video-02.mp4", n:3},
+  {id:"marc-video-03", type:"video", from:"Marc", src:"unlockables/marc-video-03.mp4", n:4},
+  {id:"hannah-video-01", type:"video", from:"Hannah", src:"unlockables/hannah-video-01.mp4", n:5},
+  {id:"reid-video-01", type:"video", from:"Reid", src:"unlockables/reid-video-01.mp4", n:6},
+  {id:"marcs-wife-video-01", type:"video", from:"Marc's wife", src:"unlockables/marcs-wife-video-01.mp4", n:7},
+  {id:"grant-video-02", type:"video", from:"Grant", src:"unlockables/grant-video-02.mp4", n:8},
+  {id:"reid-video-02", type:"video", from:"Reid", src:"unlockables/reid-video-02.mp4", n:9},
+  {id:"grant-video-03", type:"video", from:"Grant", src:"unlockables/grant-video-03.mp4", n:10}
 ];
 var BLOCKS = ["pedal","exercises","walk"];
 var STORE_KEY = "susans-stars-v1";
@@ -440,21 +443,12 @@ var BADGES = [
   {id:"champ",  ic:"🏆", nm:"4-Week Champion", how:"Earn the Weekly Star 4 weeks in a row"},
   {id:"done",   ic:"🌈", nm:"Program Complete",how:"Reach January 4 — the finish line!"}
 ];
-function weeklyStarCount(){ var n=0; for(var w=0; w<8; w++){ if(weeklyStar(w)) n++; } return n; }
-function unlockEarned(u){
-  if(u.rule === "firstDay") return firstDayDone();
-  if(u.rule === "streak2") return bestStreak() >= 2;
-  if(u.rule === "streak3") return bestStreak() >= 3;
-  if(u.rule === "streak4") return bestStreak() >= 4;
-  if(u.rule === "streak7") return bestStreak() >= 7;
-  if(u.rule === "weekly") return weeklyStarCount() >= 1;
-  if(u.rule === "weekly2") return weeklyStarCount() >= 2;
-  if(u.rule === "stars5") return starTotal() >= 5;
-  if(u.rule === "stars10") return starTotal() >= 10;
-  if(u.rule === "champ") return championEarned();
-  if(u.rule === "done") return dayIndex() >= TOTAL_DAYS-1;
-  return false;
+function streakDayTotal(){
+  var n=0;
+  for(var i=0;i<TOTAL_DAYS;i++){ if(countIdx(i) >= 2) n++; }
+  return n;
 }
+function unlockEarned(u){ return streakDayTotal() >= u.n; }
 </script>
 
 <script>
@@ -524,12 +518,12 @@ function renderUnlockCard(){
     if(unlockEarned(u) && state.unlockDay[u.id] === keyOf(today())) todays.push(u);
   }
   if(!todays.length) return;
-  var first = todays[0];
+  var newest = todays[todays.length-1];
   var div = document.createElement("div");
   div.className = "unlock";
-  div.innerHTML = "<h3>🎁 A message just for you!</h3><p>From " + first.from +
+  div.innerHTML = "<h3>🎁 A message just for you!</h3><p>From " + newest.from +
     " — unlocked by your hard work today.</p>" +
-    (first.type==="video" ? "<video controls playsinline preload='metadata' src='" + first.src + "'></video>" : "") +
+    (newest.type==="video" ? "<video controls playsinline preload='metadata' src='" + newest.src + "'></video>" : "") +
     (todays.length > 1 ? "<p style='margin-top:12px'>Plus " + (todays.length-1) +
       " more surprise" + (todays.length > 2 ? "s" : "") + " — see My Badges! 💙</p>" : "");
   slot.appendChild(div);

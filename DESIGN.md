@@ -97,10 +97,13 @@ Two screens, nothing more.
 - Small celebration as each block is tapped done; the **big** celebration —
   balloons / fireworks / confetti, with the star-wreath artwork — is reserved
   for a perfect 3-of-3 day.
-- **Unlockable encouragement:** family photos (grandkids — "you can do it,
-  Mom") and short family voice notes that open only *after* she completes a
-  day or a milestone. The slots are built into the design; the family
-  supplies the photos/recordings as they arrive.
+- **Unlockable encouragement:** family videos that open one at a time —
+  **every day she completes 2 or 3 blocks unlocks the next video**, whether
+  or not the days are consecutive (Grant's rule, 2026-11-13). Ten videos
+  collected, in unlock order: Grant, Marc ×3, Hannah, Reid, Marc's wife,
+  Grant, Reid, Grant. After the tenth good day all messages stay open in
+  My Badges. The family can supply more anytime; each new one joins the end
+  of the queue.
 - **Optional real-world treats** tied to milestones, set by the family
   (Marc's examples: a little treat, new sunglasses, a new Hawaii outfit).
   The page just celebrates; the family handles the treats.
@@ -159,6 +162,9 @@ The earlier flat-icon look was tried and retired as too simple.
   celebration, unlockable family photos/voice notes, positive-only):
   Marc's design, 2026-11-12, from Susan's actual PT program card.
 - Exercise-only tracker (2026-11-11 pivot from a health tracker).
+- Unlock rule corrected (Grant, 2026-11-13): one new family video per
+  streak day (2+ blocks), consecutive or not — replaces the original
+  milestone-slot scheme, which left whole days with no reward.
 
 ## 8. Open items (none block the build)
 
