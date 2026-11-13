@@ -334,7 +334,16 @@ var QUOTES = [
 ["You don't have to be extreme, just consistent.","Unknown"]
 ];
 var UNLOCKABLES = [
-  {id:"grant-video-01", type:"video", from:"Grant", src:"unlockables/grant-video-01.mp4", rule:"firstDay"}
+  {id:"grant-video-01", type:"video", from:"Grant", src:"unlockables/grant-video-01.mp4", rule:"firstDay"},
+  {id:"marc-video-01", type:"video", from:"Marc", src:"unlockables/marc-video-01.mp4", rule:"streak2"},
+  {id:"marc-video-02", type:"video", from:"Marc", src:"unlockables/marc-video-02.mp4", rule:"streak3"},
+  {id:"marc-video-03", type:"video", from:"Marc", src:"unlockables/marc-video-03.mp4", rule:"weekly"},
+  {id:"hannah-video-01", type:"video", from:"Hannah", src:"unlockables/hannah-video-01.mp4", rule:"streak7"},
+  {id:"reid-video-01", type:"video", from:"Reid", src:"unlockables/reid-video-01.mp4", rule:"stars5"},
+  {id:"marcs-wife-video-01", type:"video", from:"Marc's wife", src:"unlockables/marcs-wife-video-01.mp4", rule:"weekly2"},
+  {id:"grant-video-02", type:"video", from:"Grant", src:"unlockables/grant-video-02.mp4", rule:"champ"},
+  {id:"reid-video-02", type:"video", from:"Reid", src:"unlockables/reid-video-02.mp4", rule:"stars10"},
+  {id:"grant-video-03", type:"video", from:"Grant", src:"unlockables/grant-video-03.mp4", rule:"done"}
 ];
 var BLOCKS = ["pedal","exercises","walk"];
 var STORE_KEY = "susans-stars-v1";
@@ -431,8 +440,18 @@ var BADGES = [
   {id:"champ",  ic:"🏆", nm:"4-Week Champion", how:"Earn the Weekly Star 4 weeks in a row"},
   {id:"done",   ic:"🌈", nm:"Program Complete",how:"Reach January 4 — the finish line!"}
 ];
+function weeklyStarCount(){ var n=0; for(var w=0; w<8; w++){ if(weeklyStar(w)) n++; } return n; }
 function unlockEarned(u){
   if(u.rule === "firstDay") return firstDayDone();
+  if(u.rule === "streak2") return bestStreak() >= 2;
+  if(u.rule === "streak3") return bestStreak() >= 3;
+  if(u.rule === "streak7") return bestStreak() >= 7;
+  if(u.rule === "weekly") return weeklyStarCount() >= 1;
+  if(u.rule === "weekly2") return weeklyStarCount() >= 2;
+  if(u.rule === "stars5") return starTotal() >= 5;
+  if(u.rule === "stars10") return starTotal() >= 10;
+  if(u.rule === "champ") return championEarned();
+  if(u.rule === "done") return dayIndex() >= TOTAL_DAYS-1;
   return false;
 }
 </script>
