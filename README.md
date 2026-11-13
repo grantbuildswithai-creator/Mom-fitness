@@ -72,3 +72,12 @@ Text files are pushed with the GitHub connector; images and videos are
 uploaded through the GitHub website (the connector route is text-only).
 This is a standalone project site — it is not part of
 grantbuildswithai.com's main website.
+
+## Local development checks
+
+Serve the repository with `python3 -m http.server 8000 --bind 127.0.0.1`.
+Run `node tests/rules.cjs` for quote and badge thresholds, then
+`python3 tests/reliability.py` for browser regression checks against that server.
+The browser checks use Playwright and `/usr/bin/chromium` provided by the cloud
+development environment; the deployed app still has no dependencies or build.
+Tests use isolated browser storage and never change Susan's saved progress.

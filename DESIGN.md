@@ -174,3 +174,15 @@ The earlier flat-icon look was tried and retired as too simple.
 - Exact pedal settings on the card — one line is partly illegible
   (resistance/minutes); confirm with Marc if it ever matters.
 - Enable GitHub Pages when the build lands.
+
+## Reliability maintenance (2026-11-13)
+
+- Refresh the local date and saved progress when the page resumes, gains focus,
+  receives another tab's storage changes, or crosses midnight while visible.
+  Merge each checklist tap into the latest saved state. Keep the storage key
+  and `{days, celebrated, unlockDay}` shape unchanged.
+- Retain existing video players when their unlocked content has not changed,
+  so completing another block does not restart playback. Build the gallery
+  only when opened, retain `preload="metadata"`, pause videos when switching
+  views, and refresh the visible gallery after a reset. These are reliability
+  corrections, not changes to reward rules or the visual design.

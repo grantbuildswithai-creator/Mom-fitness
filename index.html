@@ -519,14 +519,16 @@ function renderToday(){
 
 function renderUnlockCard(){
   var slot = $("unlock-slot");
-  slot.innerHTML = "";
   var todays = [];
   for(var i=0;i<UNLOCKABLES.length;i++){
     var u = UNLOCKABLES[i];
     if(unlockEarned(u) && state.unlockDay[u.id] === keyOf(today())) todays.push(u);
   }
-  if(!todays.length) return;
+  if(!todays.length){ slot.replaceChildren(); slot.dataset.videoId = ""; return; }
   var newest = todays[todays.length-1];
+  if(slot.dataset.videoId === newest.id) return;
+  slot.replaceChildren();
+  slot.dataset.videoId = newest.id;
   var div = document.createElement("div");
   div.className = "unlock";
   div.innerHTML = "<h3>🎁 A message just for you!</h3><p>From " + newest.from +
@@ -558,7 +560,10 @@ function renderBadges(){
    each one shows a first frame and its length. */
 function renderGallery(){
   var fam = $("fam-slot");
-  fam.innerHTML = "";
+  var signature = UNLOCKABLES.filter(unlockEarned).map(function(u){ return u.id; }).join("|");
+  if(fam.dataset.unlocked === signature) return;
+  fam.dataset.unlocked = signature;
+  fam.replaceChildren();
   var anyUnlocked = false;
   for(var j=0;j<UNLOCKABLES.length;j++){
     var u2 = UNLOCKABLES[j];
@@ -575,7 +580,28 @@ function renderGallery(){
   }
 }
 
-function render(){ renderToday(); renderBadges(); }
+var renderedDay = "";
+function render(){
+  renderToday(); renderBadges();
+  if(!$("view-badges").classList.contains("hidden")) renderGallery();
+  renderedDay = keyOf(today());
+}
+function refreshProgress(){
+  state = load();
+  render();
+}
+/* Phone tabs can stay open overnight or resume from the back/forward cache. */
+window.addEventListener("pageshow", refreshProgress);
+window.addEventListener("focus", refreshProgress);
+document.addEventListener("visibilitychange", function(){
+  if(!document.hidden) refreshProgress();
+});
+window.addEventListener("storage", function(event){
+  if(event.key === STORE_KEY || event.key === null) refreshProgress();
+});
+setInterval(function(){
+  if(!document.hidden && renderedDay !== keyOf(today())) refreshProgress();
+}, 1000);
 
 /* ================= interactions ================= */
 function confetti(){
@@ -596,6 +622,8 @@ function celebrate(){ confetti(); $("celebrate").classList.add("show"); }
 $("btn-celebrate-close").addEventListener("click", function(){ $("celebrate").classList.remove("show"); });
 
 function toggleBlock(name){
+  /* Merge this tap into the latest saved records, including other tabs. */
+  state = load();
   var rec = todayRec();
   var before = todayCount();
   rec[name] = !rec[name];
@@ -622,6 +650,8 @@ for(var bi=0; bi<3; bi++){
 
 /* nav */
 function showView(v){
+  refreshProgress();
+  document.querySelectorAll("video").forEach(function(video){ video.pause(); });
   $("view-today").classList.toggle("hidden", v!=="today");
   $("view-badges").classList.toggle("hidden", v!=="badges");
   if(v==="badges") renderGallery();
