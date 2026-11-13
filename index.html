@@ -517,17 +517,21 @@ function renderToday(){
 function renderUnlockCard(){
   var slot = $("unlock-slot");
   slot.innerHTML = "";
+  var todays = [];
   for(var i=0;i<UNLOCKABLES.length;i++){
     var u = UNLOCKABLES[i];
-    if(unlockEarned(u) && state.unlockDay[u.id] === keyOf(today())){
-      var div = document.createElement("div");
-      div.className = "unlock";
-      div.innerHTML = "<h3>🎁 A message just for you!</h3><p>From " + u.from +
-        " — unlocked by your hard work today.</p>" +
-        (u.type==="video" ? "<video controls playsinline preload='metadata' src='" + u.src + "'></video>" : "");
-      slot.appendChild(div);
-    }
+    if(unlockEarned(u) && state.unlockDay[u.id] === keyOf(today())) todays.push(u);
   }
+  if(!todays.length) return;
+  var first = todays[0];
+  var div = document.createElement("div");
+  div.className = "unlock";
+  div.innerHTML = "<h3>🎁 A message just for you!</h3><p>From " + first.from +
+    " — unlocked by your hard work today.</p>" +
+    (first.type==="video" ? "<video controls playsinline preload='metadata' src='" + first.src + "'></video>" : "") +
+    (todays.length > 1 ? "<p style='margin-top:12px'>Plus " + (todays.length-1) +
+      " more surprise" + (todays.length > 2 ? "s" : "") + " — see My Badges! 💙</p>" : "");
+  slot.appendChild(div);
 }
 
 function renderBadges(){
@@ -553,7 +557,7 @@ function renderBadges(){
     if(unlockEarned(u2)){
       anyUnlocked = true;
       var wrap = document.createElement("div");
-      wrap.innerHTML = (u2.type==="video" ? "<video controls playsinline preload='metadata' src='" + u2.src + "'></video>" : "") +
+      wrap.innerHTML = (u2.type==="video" ? "<video controls playsinline preload='none' src='" + u2.src + "'></video>" : "") +
         "<p class='from'>From " + u2.from + " 💙</p>";
       fam.appendChild(wrap);
     }
