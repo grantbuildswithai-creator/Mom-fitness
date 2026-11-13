@@ -408,13 +408,17 @@ function currentStreak(){
   if(t-1>=0 && isStreakIdx(t-1)) return runEnding(t-1);
   return 0;
 }
+/* Days that count "so far": today included, future days excluded. Without
+   this cap, check-ins recorded while test-driving at a later pretend date
+   kept counting after stepping back — badges looked unlocked for free. */
+function effDays(){ return Math.max(0, Math.min(TOTAL_DAYS, dayIndex()+1)); }
 function bestStreak(){
   var best=0, run=0;
-  for(var i=0;i<TOTAL_DAYS;i++){ run = isStreakIdx(i) ? run+1 : 0; if(run>best) best=run; }
+  for(var i=0;i<effDays();i++){ run = isStreakIdx(i) ? run+1 : 0; if(run>best) best=run; }
   return best;
 }
-function starTotal(){ var n=0; for(var i=0;i<TOTAL_DAYS;i++){ if(isPerfectIdx(i)) n++; } return n; }
-function weekStreakDays(w){ var n=0; for(var k=0;k<7;k++){ if(isStreakIdx(w*7+k)) n++; } return n; }
+function starTotal(){ var n=0; for(var i=0;i<effDays();i++){ if(isPerfectIdx(i)) n++; } return n; }
+function weekStreakDays(w){ var n=0; for(var k=0;k<7;k++){ if(w*7+k < effDays() && isStreakIdx(w*7+k)) n++; } return n; }
 function weeklyStar(w){ return weekStreakDays(w) >= 3; }
 function championEarned(){
   var run=0;
@@ -422,7 +426,7 @@ function championEarned(){
   return false;
 }
 function firstDayDone(){
-  for(var i=0;i<TOTAL_DAYS;i++){ if(isStreakIdx(i)) return true; }
+  for(var i=0;i<effDays();i++){ if(isStreakIdx(i)) return true; }
   return false;
 }
 function badgeStates(){
@@ -434,7 +438,8 @@ function badgeStates(){
     "s7":     bestStreak() >= 7,
     "weekly": (function(){ for(var w=0;w<8;w++){ if(weeklyStar(w)) return true; } return false; })(),
     "champ":  championEarned(),
-    "done":   t >= TOTAL_DAYS-1
+    /* reaching Jan 4 alone isn't earning it — she has to have taken part */
+    "done":   t >= TOTAL_DAYS-1 && firstDayDone()
   };
 }
 var BADGES = [
@@ -448,7 +453,7 @@ var BADGES = [
 ];
 function streakDayTotal(){
   var n=0;
-  for(var i=0;i<TOTAL_DAYS;i++){ if(countIdx(i) >= 2) n++; }
+  for(var i=0;i<effDays();i++){ if(countIdx(i) >= 2) n++; }
   return n;
 }
 function unlockEarned(u){ return streakDayTotal() >= u.n; }
